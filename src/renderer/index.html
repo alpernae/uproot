@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>Uproot</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ------------------------------------------------------------------ icons
+       Single inline sprite. Strokes inherit currentColor via .ico, so every
+       glyph picks up its context colour without extra markup.
+       ---------------------------------------------------------------------- -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-apps" viewBox="0 0 24 24">
+        <rect x="3.5" y="3.5" width="7.2" height="7.2" rx="2.1" />
+        <rect x="13.3" y="3.5" width="7.2" height="7.2" rx="2.1" />
+        <rect x="3.5" y="13.3" width="7.2" height="7.2" rx="2.1" />
+        <rect x="13.3" y="13.3" width="7.2" height="7.2" rx="2.1" />
+      </symbol>
+      <symbol id="i-sparkle" viewBox="0 0 24 24">
+        <path d="M10 3.2 11.9 6.5 15.2 8.4 11.9 10.3 10 13.6 8.1 10.3 4.8 8.4 8.1 6.5Z" fill="currentColor" stroke="none" />
+        <path d="M17.6 14.4 18.7 16.5 20.8 17.6 18.7 18.7 17.6 20.8 16.5 18.7 14.4 17.6 16.5 16.5Z" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-cube" viewBox="0 0 24 24">
+        <path d="M12 3.2 19.8 7.6v8.8L12 20.8 4.2 16.4V7.6z" />
+        <path d="M4.6 7.7 12 12l7.4-4.3" />
+        <path d="M12 12v8.8" />
+      </symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24">
+        <path d="M12 3.2 19 6v5.1c0 4.4-2.9 7.9-7 9.7-4.1-1.8-7-5.3-7-9.7V6z" />
+        <path d="M9.3 11.8 11.2 13.7 14.8 9.9" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.4" />
+        <path d="M12 7.4V12l3.1 1.9" />
+      </symbol>
+      <symbol id="i-terminal" viewBox="0 0 24 24">
+        <rect x="3.2" y="4.6" width="17.6" height="14.8" rx="2.6" />
+        <path d="M7.4 9.4 10.3 12l-2.9 2.6" />
+        <path d="M12.8 14.6h3.8" />
+      </symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24">
+        <path d="M4 8h8.6" />
+        <path d="M17.4 8H20" />
+        <circle cx="15" cy="8" r="2.4" />
+        <path d="M4 16h2.6" />
+        <path d="M11.4 16H20" />
+        <circle cx="9" cy="16" r="2.4" />
+      </symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24">
+        <polyline points="22 4.5 22 10.5 16 10.5" />
+        <polyline points="2 19.5 2 13.5 8 13.5" />
+        <path d="M4.4 9.4a8.4 8.4 0 0 1 13.9-3.1L22 10.5M2 13.5l3.7 4.2A8.4 8.4 0 0 0 19.6 14.6" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="10.8" cy="10.8" r="6.6" />
+        <path d="M15.6 15.6 20 20" />
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24">
+        <path d="M6.4 6.4 17.6 17.6" />
+        <path d="M17.6 6.4 6.4 17.6" />
+      </symbol>
+      <symbol id="i-warn" viewBox="0 0 24 24">
+        <path d="M12 3.6 21 19.4H3z" />
+        <path d="M12 9.6v4.2" />
+        <path d="M12 16.9h.01" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M5 12.6 9.6 17.2 19 7.4" />
+      </symbol>
+      <symbol id="i-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.4" />
+        <path d="M12 11v5" />
+        <path d="M12 8.2h.01" />
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24">
+        <path d="M4.2 6.8h15.6" />
+        <path d="M9.3 6.8V5.4A1.6 1.6 0 0 1 10.9 3.8h2.2a1.6 1.6 0 0 1 1.6 1.6v1.4" />
+        <path d="M6.2 6.8 7.1 19a2 2 0 0 0 2 1.8h5.8a2 2 0 0 0 2-1.8l.9-12.2" />
+        <path d="M10 10.6v6" />
+        <path d="M14 10.6v6" />
+      </symbol>
+      <symbol id="i-restore" viewBox="0 0 24 24">
+        <path d="M4.2 9.2h9.4a4.8 4.8 0 0 1 0 9.6H8.6" />
+        <path d="M7.6 5.6 4 9.2l3.6 3.6" />
+      </symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24">
+        <path d="M3.2 7.4A1.8 1.8 0 0 1 5 5.6h3.3l2 2.2H19a1.8 1.8 0 0 1 1.8 1.8v7.6A1.8 1.8 0 0 1 19 19H5a1.8 1.8 0 0 1-1.8-1.8z" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="4.6" y="10.4" width="14.8" height="9.6" rx="2.4" />
+        <path d="M7.8 10.4V7.8a4.2 4.2 0 0 1 8.4 0v2.6" />
+      </symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24">
+        <path d="M9.4 6 15.4 12l-6 6" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M4.5 12h14" />
+        <path d="M12.5 6 18.5 12l-6 6" />
+      </symbol>
+      <symbol id="i-plug" viewBox="0 0 24 24">
+        <path d="M9 3.5v5" />
+        <path d="M15 3.5v5" />
+        <path d="M6.5 8.5h11v2.5a5.5 5.5 0 0 1-11 0z" />
+        <path d="M12 16.5v4" />
+      </symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2.6v2.1M12 19.3v2.1M4.1 4.1l1.5 1.5M18.4 18.4l1.5 1.5M2.6 12h2.1M19.3 12h2.1M4.1 19.9l1.5-1.5M18.4 5.6l1.5-1.5" />
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24">
+        <path d="M20.4 14.3A8.4 8.4 0 0 1 9.7 3.6 8.6 8.6 0 1 0 20.4 14.3Z" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-auto" viewBox="0 0 24 24">
+        <rect x="3.2" y="4.4" width="17.6" height="12.4" rx="2.4" />
+        <path d="M12 16.8v2.8" />
+        <path d="M8.6 19.6h6.8" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <rect x="8.6" y="8.6" width="11.2" height="11.2" rx="2.4" />
+        <path d="M15.4 8.6V6.9a2.4 2.4 0 0 0-2.4-2.4H6.9a2.4 2.4 0 0 0-2.4 2.4v6.1a2.4 2.4 0 0 0 2.4 2.4h1.7" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div id="app">
+    <!-- ------------------------------------------------------------ sidebar -->
+    <aside class="rail">
+      <div class="rail-brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <path d="M16 16.5C16 12 12.5 9.25 7 9.25 7 14.25 10.5 16.5 16 16.5Z" fill="#05170f" />
+            <path d="M16 14.75C16 9.25 20 6.25 26 6.25 26 12 22 14.75 16 14.75Z" fill="#05170f" />
+            <path d="M16 14V25.75" stroke="#05170f" stroke-width="3.75" stroke-linecap="round" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Uproot</strong>
+          <span>Deep uninstaller</span>
+        </span>
+      </div>
+
+      <nav class="rail-nav" aria-label="Sections">
+        <button class="nav-item active" data-view="apps">
+          <svg class="ico"><use href="#i-apps" /></svg><span>Applications</span>
+        </button>
+        <button class="nav-item" data-view="leftovers">
+          <svg class="ico"><use href="#i-sparkle" /></svg><span>Leftovers</span>
+        </button>
+        <button class="nav-item" data-view="runtimes">
+          <svg class="ico"><use href="#i-cube" /></svg><span>Shared runtimes</span>
+        </button>
+        <button class="nav-item" data-view="quarantine">
+          <svg class="ico"><use href="#i-shield" /></svg><span>Quarantine</span>
+        </button>
+        <button class="nav-item" data-view="history">
+          <svg class="ico"><use href="#i-clock" /></svg><span>History</span>
+        </button>
+        <button class="nav-item" data-view="log">
+          <svg class="ico"><use href="#i-terminal" /></svg><span>Activity log</span>
+        </button>
+        <button class="nav-item" data-view="settings">
+          <svg class="ico"><use href="#i-sliders" /></svg><span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="rail-foot">
+        <span class="rail-note"><svg class="ico sm"><use href="#i-lock" /></svg>Elevation on demand</span>
+      </div>
+    </aside>
+
+    <!-- --------------------------------------------------------------- main -->
+    <div class="main">
+      <header class="commandbar">
+        <div class="crumb">
+          <h1 id="view-title">Applications</h1>
+          <p id="view-sub" class="muted small">Installed programs discovered from the registry, winget and the Store.</p>
+        </div>
+        <div class="commandbar-actions">
+          <span id="admin-badge" class="badge hidden"></span>
+          <button id="theme-toggle" class="icon-btn" title="Theme" aria-label="Change theme">
+            <svg class="ico"><use href="#i-auto" /></svg>
+          </button>
+          <button id="refresh-btn" class="btn ghost" title="Refresh installed applications">
+            <svg class="ico"><use href="#i-refresh" /></svg><span>Refresh</span>
+          </button>
+        </div>
+      </header>
+
+      <div id="progress-bar" class="progress hidden"><div class="progress-fill"></div></div>
+
+      <main id="view" class="view">
+        <!-- ------------------------------------------------------- apps -->
+        <section id="apps-view" class="pane-split">
+          <aside class="pane pane-left" id="apps-pane">
+            <div class="pane-toolbar">
+              <div class="search">
+                <svg class="ico"><use href="#i-search" /></svg>
+                <input id="search-input" type="search" placeholder="Search name, publisher, id or path…" autocomplete="off" spellcheck="false" />
+                <span class="kbd-hint" aria-hidden="true"><kbd>Ctrl</kbd><kbd>F</kbd></span>
+              </div>
+              <div class="pane-toolbar-row">
+                <label class="toggle compact">
+                  <input type="checkbox" id="show-hidden" />
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                  <span class="toggle-label">System packages</span>
+                </label>
+                <span id="apps-count" class="muted small"></span>
+              </div>
+            </div>
+            <ul id="apps-list" class="list"></ul>
+          </aside>
+          <section class="pane pane-right" id="detail-pane">
+            <div class="empty-state" id="detail-placeholder">
+              <span class="empty-ico"><svg class="ico"><use href="#i-apps" /></svg></span>
+              <h3>Nothing selected</h3>
+              <p>Pick an application on the left to inspect what it installed and remove it cleanly.</p>
+            </div>
+          </section>
+        </section>
+
+        <!-- --------------------------------------------------- leftovers -->
+        <section id="leftovers-view" class="view-page hidden">
+          <header class="page-head">
+            <h2>Leftover scanner</h2>
+            <p class="muted">Find files, folders, registry keys and shortcuts an application left behind — including the dependencies it dragged in.</p>
+          </header>
+
+          <div class="card">
+            <div class="field-row">
+              <div class="field grow">
+                <label for="lo-name">Application name</label>
+                <input id="lo-name" type="text" placeholder="e.g. Discord" autocomplete="off" />
+              </div>
+              <div class="field grow">
+                <label for="lo-install">Install path <span class="opt">optional</span></label>
+                <input id="lo-install" type="text" placeholder="C:\Program Files\…" autocomplete="off" />
+              </div>
+              <button id="lo-scan" class="btn primary">Scan for leftovers</button>
+            </div>
+            <p class="hint">For sharper results, open the app under <b>Applications</b> and use <b>Find leftovers</b> there — it reuses the exact install path and publisher.</p>
+          </div>
+
+          <div id="orphan-section" class="card">
+            <div class="row between">
+              <div>
+                <h3 class="card-title">Folders not owned by any installed app</h3>
+                <p class="hint">Directories in the usual install roots that no longer belong to a registered program.</p>
+              </div>
+              <button id="orphan-scan" class="btn ghost">Scan standard folders</button>
+            </div>
+            <div id="orphan-list" class="hidden"></div>
+          </div>
+
+          <div id="lo-results" class="hidden"></div>
+        </section>
+
+        <!-- ---------------------------------------------------- runtimes -->
+        <section id="runtimes-view" class="view-page hidden">
+          <header class="page-head split">
+            <div>
+              <h2>Shared runtimes</h2>
+              <p class="muted">
+                Redistributables like Visual C++, .NET and Java are installed by many applications at once.
+                The analyzer reads the import tables of every installed program and shows which runtimes still
+                have dependants. Removing a runtime that shows no dependants is a suggestion only — drivers and
+                other software can use these silently.
+              </p>
+            </div>
+            <button id="runtimes-scan" class="btn primary">Analyze usage</button>
+          </header>
+          <div id="runtimes-results" class="hidden"></div>
+        </section>
+
+        <!-- -------------------------------------------------- quarantine -->
+        <section id="quarantine-view" class="view-page hidden">
+          <header class="page-head">
+            <h2>Quarantine</h2>
+            <p class="muted">Removed files are held here rather than destroyed, so a mistake stays reversible. Registry keys are always exported to <code>.reg</code> backups first.</p>
+          </header>
+          <div id="quarantine-list"></div>
+        </section>
+
+        <!-- ----------------------------------------------------- history -->
+        <section id="history-view" class="view-page hidden">
+          <header class="page-head">
+            <h2>History</h2>
+            <p class="muted">Every uninstall and cleanup this tool has performed.</p>
+          </header>
+          <div id="history-list"></div>
+        </section>
+
+        <!-- --------------------------------------------------------- log -->
+        <section id="log-view" class="view-page hidden">
+          <header class="page-head split">
+            <div>
+              <h2>Activity log</h2>
+              <p class="muted">Diagnostics written by the main process. Attach this when reporting a problem.</p>
+            </div>
+            <button id="log-refresh" class="btn ghost">
+              <svg class="ico"><use href="#i-refresh" /></svg><span>Refresh</span>
+            </button>
+          </header>
+          <pre id="log-output" class="log-pane"></pre>
+        </section>
+
+        <!-- ----------------------------------------------------- settings -->
+        <section id="settings-view" class="view-page hidden">
+          <header class="page-head">
+            <h2>Settings</h2>
+            <p class="muted">Scanning behaviour and the safety defaults used by the uninstall wizard.</p>
+          </header>
+          <div id="settings-body"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+
+  <script src="js/core.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/wizard.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

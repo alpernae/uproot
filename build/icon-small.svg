@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Simplified mark for 16–32 px: roots and soil would blur into noise. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4ad9a1"/>
+      <stop offset="1" stop-color="#178a5f"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="256" height="256" rx="56" fill="url(#bg)"/>
+
+  <g fill="#052a1b" stroke="#052a1b" stroke-linecap="round">
+    <path stroke="none" d="M128 132 C128 96 100 74 56 74 C56 114 84 132 128 132 Z"/>
+    <path stroke="none" d="M128 118 C128 74 160 50 208 50 C208 96 176 118 128 118 Z"/>
+    <path fill="none" stroke-width="30" d="M128 112 V206"/>
+  </g>
+</svg>

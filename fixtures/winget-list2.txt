@@ -1,0 +1,95 @@
+Name                                                         Id                                                                                   Version            Available     Source
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+App Installer                                                Microsoft.AppInstaller                                                               1.29.379.0         1.29.380      winget
+Auto Dark Mode                                               XP8JK4HZBVF435                                                                       11.1.1.1                         msstore
+AV1 Video Extension                                          MSIX\Microsoft.AV1VideoExtension_2.0.7.0_x64__8wekyb3d8bbwe                          2.0.7.0                          
+AVC Kodlayıcı Video Eklentisi                                MSIX\Microsoft.AVCEncoderVideoExtension_1.1.23.0_x64__8wekyb3d8bbwe                  1.1.23.0                         
+Burp Suite 2026.8                                            PortSwigger.BurpSuite                                                                2026.8             2026.9.1      winget
+Cihaz Üreticisinden HEVC Video Uzantıları                    MSIX\Microsoft.HEVCVideoExtension_2.4.45.0_x64__8wekyb3d8bbwe                        2.4.45.0                         
+Claude                                                       Anthropic.Claude                                                                     2.31226.1.0                      winget
+Cloudflare One Client                                        Cloudflare.Warp                                                                      26.7.1376.0        26.8.2100.0   winget
+Counter-Strike 2                                             ARP\Machine\X64\Steam App 730                                                        Unknown                          
+Dev Home                                                     MSIX\Microsoft.Windows.DevHome_0.0.0.0_x64__8wekyb3d8bbwe                            0.0.0.0                          
+Discord                                                      ARP\User\X64\Discord                                                                 1.0.9260                         
+Ekran Alıntısı Aracı                                         MSIX\Microsoft.ScreenSketch_11.2607.23.0_x64__8wekyb3d8bbwe                          11.2607.23.0                     
+Game Bar                                                     MSIX\Microsoft.XboxGamingOverlay_7.325.7221.0_x64__8wekyb3d8bbwe                     7.325.7221.0                     
+Game Speech Window                                           MSIX\Microsoft.XboxSpeechToTextOverlay_1.123.11001.0_x64__8wekyb3d8bbwe              1.123.11001.0                    
+Get Help                                                     MSIX\Microsoft.GetHelp_10.2407.40222.0_x64__8wekyb3d8bbwe                            10.2407.40222.0                  
+Git                                                          Git.Git                                                                              2.55.0.5                         winget
+Google Chrome                                                ARP\Machine\X86\Google Chrome                                                        155.0.8059.39                    
+HEIF Resim Uzantısı                                          MSIX\Microsoft.HEIFImageExtension_1.2.36.0_x64__8wekyb3d8bbwe                        1.2.36.0                         
+Lenovo Vantage                                               MSIX\E046963F.LenovoCompanion_10.2608.43.0_x64__k1h2ywk1493x8                        10.2608.43.0                     
+Lenovo Vantage Service                                       ARP\Machine\X86\VantageSRV_is1                                                       5.1.2609.9                       
+Linux için Windows Alt Sistemi                               Microsoft.WSL                                                                        3.0.1.0                          winget
+Microsoft .Net Native Framework Package 2.2                  MSIX\Microsoft.NET.Native.Framework.2.2_2.2.29512.0_x64__8wekyb3d8bbwe               2.2.29512.0                      
+Microsoft .Net Native Framework Package 2.2                  MSIX\Microsoft.NET.Native.Framework.2.2_2.2.29512.0_x86__8wekyb3d8bbwe               2.2.29512.0                      
+Microsoft .Net Native Runtime Package 2.2                    Microsoft.DotNet.Native.Runtime                                                      2.2.28604.0                      winget
+Microsoft .Net Native Runtime Package 2.2                    Microsoft.DotNet.Native.Runtime                                                      2.2.28604.0                      winget
+Microsoft Bing                                               MSIX\Microsoft.BingSearch_1.1.43.0_x64__8wekyb3d8bbwe                                1.1.43.0                         
+Microsoft Clipchamp                                          MSIX\Clipchamp.Clipchamp_4.6.10420.0_x64__yxz26nhyzhsrt                              4.6.10420.0                      
+Microsoft Edge                                               Microsoft.Edge                                                                       152.0.4191.66      155.0.4283.45 winget
+Microsoft Edge                                               MSIX\Microsoft.MicrosoftEdge.Stable_152.0.4191.66_neutral__8wekyb3d8bbwe             152.0.4191.66                    
+Microsoft Edge WebView2 Runtime                              Microsoft.EdgeWebView2Runtime                                                        152.0.4191.66      155.0.4283.45 winget
+Microsoft Fotoğraflar                                        MSIX\Microsoft.Windows.Photos_2026.11090.22001.0_x64__8wekyb3d8bbwe                  2026.11090.22001.0               
+Microsoft Store                                              MSIX\Microsoft.WindowsStore_22608.1401.5.0_x64__8wekyb3d8bbwe                        22608.1401.5.0                   
+Microsoft Visual C++ 2013 Redistributable (x64) - 12.0.30501 Microsoft.VCRedist.2013.x64                                                          12.0.30501.0       12.0.40664.0  winget
+Microsoft Visual C++ 2013 Redistributable (x86) - 12.0.30501 Microsoft.VCRedist.2013.x86                                                          12.0.30501.0       12.0.40664.0  winget
+Microsoft Visual C++ 2015 UWP Desktop Runtime Package        Microsoft.VCLibs.Desktop.14                                                          14.0.33728.0                     winget
+Microsoft Visual C++ 2015 UWP Desktop Runtime Package        Microsoft.VCLibs.Desktop.14                                                          14.0.33728.0                     winget
+Microsoft Visual C++ 2015 UWP Runtime Package                Microsoft.VCLibs.14                                                                  14.0.33519.0                     winget
+Microsoft Visual C++ 2015 UWP Runtime Package                Microsoft.VCLibs.14                                                                  14.0.33519.0                     winget
+Microsoft Visual C++ v14 Redistributable (x64) - 14.51.36247 Microsoft.VCRedist.2015+.x64                                                         14.51.36247.0                    winget
+Microsoft Visual C++ v14 Redistributable (x86) - 14.51.36247 Microsoft.VCRedist.2015+.x86                                                         14.51.36247.0                    winget
+Microsoft Visual Studio Code (User)                          Microsoft.VisualStudioCode                                                           1.141.0                          winget
+Microsoft Windows Application Compatibility Fix Database     ARP\Machine\X64\{22221111-1111-1111-1111-111111111111}.sdb                           Unknown                          
+Microsoft.UI.Xaml.2.8                                        Microsoft.UI.Xaml.2.8                                                                8.2511.26001.0                   winget
+Microsoft.UI.Xaml.2.8                                        Microsoft.UI.Xaml.2.8                                                                8.2501.31001.0                   winget
+Mobile devices                                               MSIX\MicrosoftWindows.CrossDevice_0.26062.105.0_x64__cw5n1h2txyewy                   0.26062.105.0                    
+MPEG-2 Video Uzantısı                                        MSIX\Microsoft.MPEG2VideoExtension_1.2.13.0_x64__8wekyb3d8bbwe                       1.2.13.0                         
+MSN Weather                                                  MSIX\Microsoft.BingWeather_3.2.11.0_x64__8wekyb3d8bbwe                               3.2.11.0                         
+Narrator Extension - Excel                                   MSIX\MicrosoftWindows.NarratorScript.Excel_1.0.14.0_neutral__cw5n1h2txyewy           1.0.14.0                         
+Narrator Extension - Outlook Web App                         MSIX\MicrosoftWindows.NarratorExtension-OutlookWebApp_1.0.2.0_neutral__cw5n1h2txyewy 1.0.2.0                          
+Narrator Extension - PowerPoint                              MSIX\MicrosoftWindows.NarratorExtension-ppt_1.0.4.0_neutral__cw5n1h2txyewy           1.0.4.0                          
+Narrator Extension - Word                                    MSIX\MicrosoftWindows.NarratorExtension-Word_2.0.3.0_neutral__cw5n1h2txyewy          2.0.3.0                          
+NarratorExtension - Outlook                                  MSIX\MicrosoftWindows.NarratorScript.Outlook_2.0.4.0_neutral__cw5n1h2txyewy          2.0.4.0                          
+Nexus Air V1 version 1.0.1.1                                 ARP\Machine\X64\{C378302B-FBDB-4491-B8BC-BE99B40A455B}_is1                           1.0.1.1                          
+Node.js                                                      OpenJS.NodeJS.22                                                                     26.10.0                          winget
+Notion                                                       Notion.Notion                                                                        7.36.1.0           7.37.1        winget
+NVIDIA Control Panel                                         MSIX\NVIDIACorp.NVIDIAControlPanel_8.1.969.0_x64__56jybvy8sckqj                      8.1.969.0                        
+NVIDIA Graphics Driver 591.66                                ARP\Machine\X64\{B2FE1952-0186-46C3-BAEC-A80AA35AC5B8}_Display.Driver                591.66                           
+Phone Link                                                   MSIX\Microsoft.YourPhone_0.26062.148.0_x64__8wekyb3d8bbwe                            0.26062.148.0                    
+Power Automate                                               MSIX\Microsoft.PowerAutomateDesktop_1.0.2046.0_x64__8wekyb3d8bbwe                    1.0.2046.0                       
+PUBG: BATTLEGROUNDS                                          ARP\Machine\X64\Steam App 578080                                                     Unknown                          
+Raw Görüntü Uzantısı                                         MSIX\Microsoft.RawImageExtension_2.5.24.0_x64__8wekyb3d8bbwe                         2.5.24.0                         
+Red Dead Redemption 2                                        ARP\Machine\X64\Steam App 1174180                                                    Unknown                          
+Start Experiences App                                        MSIX\Microsoft.StartExperiencesApp_1.380.0.0_x64__8wekyb3d8bbwe                      1.380.0.0                        
+Steam                                                        Valve.Steam                                                                          2.10.91.91                       winget
+Store Deneyimi Ana Bilgisayarı                               MSIX\Microsoft.StorePurchaseApp_22509.1400.2.0_x64__8wekyb3d8bbwe                    22509.1400.2.0                   
+Ubuntu                                                       Canonical.Ubuntu                                                                     2604.1.75.0                      winget
+Unigram—Telegram for Windows                                 MSIX\38833FF26BA1D.UnigramPreview_12.10.7.0_x64__g9c9v27vpyspw                       12.10.7.0                        
+Visual Studio Code                                           MSIX\Microsoft.VisualStudioCode_1.0.141.0_neutral__8wekyb3d8bbwe                     1.0.141.0                        
+VP9 Video Uzantıları                                         MSIX\Microsoft.VP9VideoExtensions_1.2.20.0_x64__8wekyb3d8bbwe                        1.2.20.0                         
+Web Medyası Uzantıları                                       MSIX\Microsoft.WebMediaExtensions_2.1.38.0_x64__8wekyb3d8bbwe                        2.1.38.0                         
+WebP Resim Uzantısı                                          MSIX\Microsoft.WebpImageExtension_1.2.14.0_x64__8wekyb3d8bbwe                        1.2.14.0                         
+WhatsApp                                                     MSIX\5319275A.WhatsAppDesktop_2.2639.100.0_x64__cv1g1gvanyjgm                        2.2639.100.0                     
+Widgets Platform Runtime                                     MSIX\Microsoft.WidgetsPlatformRuntime_1.6.19.0_x64__8wekyb3d8bbwe                    1.6.19.0                         
+WinAppRuntime.Main.2                                         MSIX\MicrosoftCorporationII.WinAppRuntime.Main.2_2.5.1.0_x64__8wekyb3d8bbwe          2.5.1.0                          
+WinAppRuntime.Singleton                                      MSIX\MicrosoftCorporationII.WinAppRuntime.Singleton_8002.5.1.0_x64__8wekyb3d8bbwe    8002.5.1.0                       
+Windows Calculator                                           MSIX\Microsoft.WindowsCalculator_11.2502.2.0_x64__8wekyb3d8bbwe                      11.2502.2.0                      
+Windows Camera                                               MSIX\Microsoft.WindowsCamera_2025.2510.2.0_x64__8wekyb3d8bbwe                        2025.2510.2.0                    
+Windows Clock                                                MSIX\Microsoft.WindowsAlarms_1.1.85.0_x64__8wekyb3d8bbwe                             1.1.85.0                         
+Windows Güvenliği                                            MSIX\Microsoft.SecHealthUI_1000.26100.9457.0_x64__8wekyb3d8bbwe                      1000.26100.9457.0                
+Windows Media Player                                         MSIX\Microsoft.ZuneMusic_11.2512.10.0_x64__8wekyb3d8bbwe                             11.2512.10.0                     
+Windows Not Defteri                                          MSIX\Microsoft.WindowsNotepad_11.2607.14.0_x64__8wekyb3d8bbwe                        11.2607.14.0                     
+Windows Package Manager Source (winget) V2                   MSIX\Microsoft.Winget.Source_2026.1012.911.37_neutral__8wekyb3d8bbwe                 2026.1012.911.37                 
+Windows Terminal                                             Microsoft.WindowsTerminal                                                            1.24.11911.0       1.25.2733.0   winget
+Windows Uygulama Uyumluluğu Geliştirmeleri                   MSIX\Microsoft.ApplicationCompatibilityEnhancements_1.2511.9.0_x64__8wekyb3d8bbwe    1.2511.9.0                       
+Windows Web Experience Pack                                  MSIX\MicrosoftWindows.Client.WebExperience_526.21100.40.0_x64__cw5n1h2txyewy         526.21100.40.0                   
+WindowsAppRuntime.1.8                                        Microsoft.WindowsAppRuntime.1.8                                                      > 1.8.10                         winget
+WindowsAppRuntime.1.8                                        Microsoft.WindowsAppRuntime.1.8                                                      > 1.8.10                         winget
+WindowsAppRuntime.2                                          Microsoft.WindowsAppRuntime.2                                                        2.5.1.0                          winget
+WindowsAppRuntime.2                                          Microsoft.WindowsAppRuntime.2                                                        2.5.1.0                          winget
+Xbox                                                         MSIX\Microsoft.GamingApp_2605.900.13.0_x64__8wekyb3d8bbwe                            2605.900.13.0                    
+Xbox Identity Provider                                       MSIX\Microsoft.XboxIdentityProvider_12.130.2510.6003_x64__8wekyb3d8bbwe              12.130.2510.6003                 
+Xbox TCUI                                                    MSIX\Microsoft.Xbox.TCUI_1.23.28005.0_x64__8wekyb3d8bbwe                             1.23.28005.0                     
+YouTube Music                                                ARP\User\X64\c7acaf7e46d04a98d1d0e2758b6dcd7a                                        1.0                              
