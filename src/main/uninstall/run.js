@@ -139,7 +139,7 @@ async function runAppxRemove(packageFullName, allUsers) {
 // Verification
 // ---------------------------------------------------------------------------
 
-async function verifyRemoved(app) {
+async function verifyRemoved(app, options = {}) {
   const reasons = [];
 
   for (const r of app.registry || []) {
@@ -155,7 +155,11 @@ async function verifyRemoved(app) {
     if (check.ok && check.data && check.data.present === true) reasons.push('MSIX package is still registered');
   }
 
-  if (app.installLocation) {
+  // Package directories under WindowsApps keep existing after
+  // Remove-AppxPackage — TrustedInstaller owns them and the OS manages their
+  // life cycle. There is no user-facing cleanup to do there, so it is treated
+  // as OS-managed space rather than uninstall residue.
+  if (app.installLocation && options.ignoreInstallFolder !== true) {
     const exists = fs.existsSync(app.installLocation);
     if (exists) reasons.push(`Install folder still exists: ${app.installLocation}`);
   }
@@ -168,7 +172,7 @@ async function verifyRemoved(app) {
 // ---------------------------------------------------------------------------
 
 async function executeUninstall(app, plan, options = {}) {
-  const { onEvent = () => {}, allUsers = false, stopRunningProcesses = true } = options;
+  const { onEvent = () => {}, allUsers = false, force = false, stopRunningProcesses = true } = options;
   const admin = await isAdmin();
   const elevated = plan.needsAdmin && !admin;
 
@@ -266,7 +270,12 @@ async function executeUninstall(app, plan, options = {}) {
       }
 
       case 'appx': {
-        const r = await runAppxRemove(plan.packageFullName, allUsers);
+        // Force mode promotes the removal to the strongest available variant:
+        // every user account plus the provisioned (copied-to-new-profiles)
+        // package, which needs elevation. A plain current-user removal can
+        // leave both behind for built-in Windows components.
+        const all = Boolean(allUsers || force);
+        const r = await runAppxRemove(plan.packageFullName, all);
         result.ok = r.ok;
         result.output = r.error || JSON.stringify(r.data || {});
         if (r.blocked) result.blocked = true;
@@ -290,8 +299,11 @@ async function executeUninstall(app, plan, options = {}) {
   step('verify', 'running');
   let verification = null;
   if (plan.method !== 'url' && !result.blocked) {
+    // For MSIX packages the install folder under WindowsApps is OS-managed and
+    // survives removal; only the registration status decides success there.
+    const verifyOptions = { ignoreInstallFolder: plan.method === 'appx' };
     for (let i = 0; i < 12; i += 1) {
-      verification = await verifyRemoved(app).catch((e) => ({ removed: false, reasons: [e.message] }));
+      verification = await verifyRemoved(app, verifyOptions).catch((e) => ({ removed: false, reasons: [e.message] }));
       if (verification.removed) break;
       await new Promise((resolve) => setTimeout(resolve, 2500));
     }

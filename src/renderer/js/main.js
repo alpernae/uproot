@@ -9,11 +9,12 @@
   const VIEW_META = {
     apps: ['Applications', 'Installed programs discovered from the registry, winget and the Store.'],
     leftovers: ['Leftovers', 'Residue, orphaned folders and shared dependency traces.'],
+    privacy: ['Privacy', 'Windows telemetry, activity history and reporting stores you can remove.'],
     runtimes: ['Shared runtimes', 'Redistributables and which applications still depend on them.'],
     quarantine: ['Quarantine', 'Undo removal — files are held here and registry keys are backed up.'],
     history: ['History', 'Every uninstall and cleanup this tool has performed.'],
     log: ['Activity log', 'Diagnostics written by the main process.'],
-    settings: ['Settings', 'Scanning behaviour and the safety defaults used by the uninstall wizard.'],
+    settings: ['Settings', 'Scanning behaviour, privacy scan scope, overrides and the safety defaults used by the uninstall wizard.'],
   };
 
   const viewRenderers = {
@@ -26,6 +27,9 @@
     },
     leftovers() {
       Views.renderLeftovers();
+    },
+    privacy() {
+      Views.renderPrivacy();
     },
     runtimes() {
       Views.renderRuntimes(false);
@@ -117,7 +121,13 @@
       }
     });
 
-    $('#show-hidden').addEventListener('change', () => Views.renderAppsList());
+    $('#show-hidden').checked = (state.settings && state.settings.hideSystemComponents) === false;
+    $('#show-hidden').addEventListener('change', async () => {
+      Views.renderAppsList();
+      // The checkbox and the Settings entry are the same switch; keep both in
+      // sync. Unchecked = hidden components, so invert when persisting.
+      await U.saveSettings({ hideSystemComponents: !$('#show-hidden').checked });
+    });
     $('#apps-list').addEventListener('click', (e) => {
       const li = e.target.closest('[data-app-id]');
       if (!li) return;
@@ -184,6 +194,10 @@
       if (e.key === 'Enter') run();
     });
     $('#orphan-scan').addEventListener('click', () => Views.renderLeftovers());
+  }
+
+  function wirePrivacy() {
+    $('#privacy-scan').addEventListener('click', () => Views.runPrivacyScan());
   }
 
   function wireRuntimes() {
@@ -260,6 +274,7 @@
     wireAppList();
     wireTheme();
     wireLeftovers();
+    wirePrivacy();
     wireRuntimes();
     wireLog();
 

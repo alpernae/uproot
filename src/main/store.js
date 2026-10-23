@@ -16,6 +16,12 @@ const DEFAULT_SETTINGS = {
   stopRunningProcesses: true,
   checkLeftoversAfterUninstall: true,
   pageSize: 400,
+  // Privacy scan scope (Privacy view).
+  privacyIncludeServices: true,
+  privacyIncludeTasks: true,
+  privacyIncludeHistory: true,
+  // Override: allow force-removing built-in Windows components.
+  allowSystemOverride: false,
 };
 
 let cache = null;

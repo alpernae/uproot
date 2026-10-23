@@ -167,12 +167,19 @@
       ['Source', `${app.sources.join(', ')} (registry=${app.registry.length}, winget=${app.winget.length}, appx=${app.appx.length})`],
     ];
 
+    const overrideOn = Boolean(state.settings && state.settings.allowSystemOverride);
     let warnings = '';
     if (app.nonRemovable) {
-      warnings += `<div class="err-block">This package is marked non-removable by Windows. Removal may fail or leave the Store in an inconsistent state.</div>`;
+      warnings += `<div class="err-block">This package is marked non-removable by Windows. Removal may fail or leave the Store in an inconsistent state.${
+        overrideOn
+          ? ' <b>System override is on</b> — removal will run with force (all users + deprovisioned).'
+          : ' Force removal can be enabled in Settings → Overrides.'
+      }</div>`;
     }
     if (app.isSystemComponent) {
-      warnings += `<div class="warn-block">Windows marks this as a system component. Removing it can affect other software.</div>`;
+      warnings += `<div class="warn-block">Windows marks this as a system component. Removing it can affect other software.${
+        overrideOn ? ' <b>System override is on</b> — the wizard will let you force-remove it.' : ''
+      }</div>`;
     }
 
     pane.innerHTML = `
@@ -418,6 +425,173 @@
   }
 
   // =====================================================================
+  // Privacy (Windows telemetry & activity data)
+  // =====================================================================
+
+  const PRIVACY_KIND_LABELS = { service: 'Telemetry services', task: 'Telemetry tasks', file: 'Activity & report stores' };
+
+  function privacyFindingRow(item, i) {
+    return `
+      <div class="finding" style="--i:${Math.min(i, 24)}">
+        <label title="Include in removal"><input type="checkbox" data-priv-check="${esc(item.id)}" ${item.checked ? 'checked' : ''}/></label>
+        <span class="conf ${confClass(item.confidence)}">${confLabel(item.confidence)}</span>
+        <div class="body">
+          <div class="path">${esc(item.displayName || item.name)}</div>
+          <div class="meta">
+            ${esc(item.kind === 'service' ? `service · ${item.state || (item.startMode || '')}` : item.kind === 'task' ? `scheduled task · ${esc(item.taskPath || '\\')}${esc(item.taskName || item.name)}` : esc(item.path || ''))}
+            ${item.state ? ` · ${esc(item.state)}` : ''}
+            ${item.admin ? ' · admin' : ''}
+          </div>
+          ${item.why ? `<div class="meta">${esc(item.why)}</div>` : ''}
+        </div>
+        ${item.target || item.path ? U.copyBtn(item.target || item.path, 'path') : ''}
+        ${item.admin ? '<span class="badge machine">admin</span>' : ''}
+      </div>`;
+  }
+
+  Views.runPrivacyScan = async function () {
+    const target = $('#privacy-results');
+    const btn = $('#privacy-scan');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Scanning…';
+    }
+    U.setProgress('Inventorying Windows telemetry, tasks and activity stores…');
+    try {
+      const res = await U.api.privacy.scan();
+      if (!res.ok) throw new Error(res.error || 'Scan failed');
+      state.privacy = { findings: res.data.findings || [], errors: res.data.errors || [], at: res.data.scannedAt };
+      if (state.privacy.errors.length) {
+        U.toast(`Privacy scan finished with ${state.privacy.errors.length} source error(s).`, 'warn', 6000);
+      } else {
+        U.toast(`${state.privacy.findings.length} privacy item(s) found.`, 'ok', 2600);
+      }
+    } catch (e) {
+      U.toast('Privacy scan failed: ' + (e && e.message ? e.message : e), 'err');
+    } finally {
+      U.clearProgress();
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Scan';
+      }
+    }
+    Views.renderPrivacy();
+  };
+
+  Views.renderPrivacy = function () {
+    const target = $('#privacy-results');
+    if (!target) return;
+
+    if (!state.privacy) {
+      target.innerHTML = '<div class="empty">Press <b>Scan</b> to inventory the telemetry and activity items on this system.</div>';
+      return;
+    }
+
+    const { findings, errors } = state.privacy;
+    const byKind = new Map();
+    for (const f of findings) {
+      if (!byKind.has(f.kind)) byKind.set(f.kind, []);
+      byKind.get(f.kind).push(f);
+    }
+
+    if (!findings.length) {
+      target.innerHTML = `<div class="empty-state">
+        <span class="empty-ico"><svg class="ico"><use href="#i-eye"></use></svg></span>
+        <h3>Nothing found</h3>
+        <p>No catalogued telemetry services, tasks or activity stores are present on this system${errors.length ? ' (see the scan errors below)' : ''}.</p>
+      </div>${errors.length ? `<div class="err-block">${esc(errors.join(' '))}</div>` : ''}`;
+      return;
+    }
+
+    const groups = [...byKind.entries()].map(([kind, items]) => {
+      const checked = items.filter((x) => x.checked).length;
+      return `
+        <div class="section-title">${esc(PRIVACY_KIND_LABELS[kind] || kind)} (${items.length}${checked !== items.length ? ` — ${checked} selected` : ''})</div>
+        <div class="card flush">
+          <div class="card-head">
+            <label class="check"><input type="checkbox" data-priv-all="${esc(kind)}"/><span>Select all ${items.length}</span></label>
+          </div>
+          ${items.map(privacyFindingRow).join('')}
+        </div>`;
+    }).join('');
+
+    target.innerHTML = `
+      <div class="card">
+        <div class="row between">
+          <span class="row gap">
+            <span class="badge info">${findings.length} item(s)</span>
+            <span class="badge info">${findings.filter((f) => f.admin).length} need administrator</span>
+          </span>
+          <span class="row gap">
+            <label class="check"><input type="radio" name="priv-mode" value="quarantine" ${(state.settings && state.settings.defaultCleanupMode) !== 'delete' ? 'checked' : ''}/> Quarantine</label>
+            <label class="check"><input type="radio" name="priv-mode" value="delete"/> Permanent delete</label>
+          </span>
+        </div>
+        <div class="warn-block">
+          Default selection follows the catalog. Services are stopped and deleted after the key is exported; tasks are unregistered after a
+          <b>.xml</b> export; files are quarantined or permanently deleted. Removing Windows telemetry tasks is reversible up to
+          the next feature update only — Windows may reinstate some of them.
+        </div>
+        ${errors.length ? `<div class="err-block">${esc(errors.join(' '))}</div>` : ''}
+      </div>
+      ${groups}
+      <div class="row end" style="margin-top:16px">
+        <button class="btn danger" id="privacy-remove"><svg class="ico"><use href="#i-trash"></use></svg>Remove selected</button>
+      </div>`;
+
+    $$('input[data-priv-all]', target).forEach((el) => {
+      el.onchange = () => {
+        const kind = el.dataset.privAll;
+        $$(`input[data-priv-check]`, target).forEach((c) => {
+          const item = (state.privacy.findings || []).find((f) => f.id === c.dataset.privCheck);
+          if (item && item.kind === kind) c.checked = el.checked;
+        });
+      };
+    });
+
+    const removeBtn = $('#privacy-remove');
+    if (removeBtn) {
+      removeBtn.onclick = async () => {
+        const selected = [];
+        $$('input[data-priv-check]:checked', target).forEach((c) => {
+          const item = (state.privacy.findings || []).find((f) => f.id === c.dataset.privCheck);
+          if (item) selected.push(item);
+        });
+        if (!selected.length) {
+          U.toast('Nothing selected to remove.', 'warn');
+          return;
+        }
+        const mode = $('input[name="priv-mode"]:checked', target).value;
+        const machine = selected.filter((s) => s.admin).length;
+        const ok = await U.confirmDialog({
+          title: 'Remove Windows privacy items',
+          body:
+            `Remove ${selected.length} item(s) (${mode === 'delete' ? 'files permanently deleted' : 'files quarantined'} — service keys and task definitions are always exported first)` +
+            `${machine ? `? ${machine} item(s) need a UAC prompt.` : '?'}`,
+          confirmLabel: 'Remove',
+          danger: true,
+        });
+        if (!ok) return;
+        removeBtn.disabled = true;
+        removeBtn.textContent = 'Removing…';
+        U.setProgress('Removing selected privacy items…');
+        const r = await U.api.privacy.remove({ items: selected, mode });
+        U.clearProgress();
+        removeBtn.disabled = false;
+        removeBtn.textContent = 'Remove selected';
+        if (r.ok) {
+          const m = r.data || {};
+          U.toast(`Privacy cleanup done: ${m.succeeded} succeeded, ${m.failed} failed.`, m.failed ? 'warn' : 'ok');
+        } else {
+          U.toast('Privacy cleanup failed: ' + (r.error || ''), 'err');
+        }
+        state.privacy = null;
+        Views.runPrivacyScan();
+      };
+    }
+  };
+
+  // =====================================================================
   // Runtimes
   // =====================================================================
 
@@ -620,12 +794,26 @@
       {
         title: 'Scanning',
         items: [
-          ['hideSystemComponents', 'Hide system components', 'Keep MSIX frameworks, shared runtimes and Windows components out of the application list.'],
+          ['hideSystemComponents', 'Hide system components', 'Keep MSIX frameworks, shared runtimes and Windows components out of the application list. Same switch as the "System packages" checkbox on the Apps view.'],
           ['hideUpdates', 'Hide updates and hotfixes', 'Skip entries that are updates rather than removable programs.'],
           ['scanRegistryReferences', 'Scan the whole registry for references', 'Slower, but finds keys pointing at the install path anywhere under HKLM and HKCU.'],
           ['analyzeRuntimesOnUninstall', 'Analyze shared runtimes after uninstalling', 'Check whether a runtime such as Visual C++ just lost its last dependant.'],
           ['checkLeftoversAfterUninstall', 'Scan for leftovers automatically', 'Look for the files and keys the vendor uninstaller left behind.'],
           ['stopRunningProcesses', 'Close running processes first', 'Terminate processes running from the install folder before uninstalling.'],
+        ],
+      },
+      {
+        title: 'Privacy',
+        items: [
+          ['privacyIncludeServices', 'Scan Windows telemetry services', 'Privacy view lists Windows services such as the Connected User Experiences and Telemetry pipeline (DiagTrack).'],
+          ['privacyIncludeTasks', 'Scan telemetry scheduled tasks', 'Compatibility appraiser, Customer Experience Improvement Program, error-report upload and device-information tasks.'],
+          ['privacyIncludeHistory', 'Scan activity history & report stores', 'Timeline / Connected Devices activity data, feedback staging and Windows Error Reporting report folders.'],
+        ],
+      },
+      {
+        title: 'Overrides',
+        items: [
+          ['allowSystemOverride', 'Force-remove Windows components', 'Allow the uninstall wizard to remove built-in Windows apps with the strongest method (every user account + deprovisioning). Removing protected components can break Windows features, Store apps or updates. Treated as a deliberate expert setting.'],
         ],
       },
       {
@@ -691,7 +879,41 @@
 
     $$('[data-setting]', target).forEach((el) => {
       el.onchange = async () => {
-        await U.saveSettings({ [el.dataset.setting]: el.checked });
+        const key = el.dataset.setting;
+        // The override is dangerous: require an explicit confirmation before it
+        // takes effect and cancel the change when the user steps back.
+        if (key === 'allowSystemOverride') {
+          if (el.checked) {
+            const ok = await U.confirmDialog({
+              title: 'Enable system override?',
+              body:
+                'Unhide and allow force-removal of built-in Windows components (Edge, Widgets, Cortana, provisioned Store apps and similar). ' +
+                'They are removed for every user account and deprovisioned, which needs a UAC prompt. Windows features and Store apps may stop working if a component is removed.',
+              confirmLabel: 'Enable override',
+              danger: true,
+            });
+            if (!ok) {
+              el.checked = false;
+              return;
+            }
+            U.toast('Override enabled — turn it off here any time.', 'ok', 3600);
+          } else {
+            U.toast('Override disabled. Windows components are protected again.', 'ok', 2600);
+          }
+          await U.saveSettings({ allowSystemOverride: el.checked });
+          return;
+        }
+        // Changing the scan scope invalidates the cached privacy inventory.
+        if (key === 'privacyIncludeServices' || key === 'privacyIncludeTasks' || key === 'privacyIncludeHistory') {
+          state.privacy = null;
+        }
+        // Keep the "System packages" checkbox on the Apps view in sync — it is
+        // the same switch presented in the list position.
+        if (key === 'hideSystemComponents') {
+          const t = $('#show-hidden');
+          if (t) t.checked = !el.checked;
+        }
+        await U.saveSettings({ [key]: el.checked });
         U.toast('Setting saved', 'ok', 1800);
       };
     });

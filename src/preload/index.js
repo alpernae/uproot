@@ -16,6 +16,10 @@ const api = {
   uninstall: {
     run: (payload) => ipcRenderer.invoke('uninstall:run', payload),
   },
+  privacy: {
+    scan: () => ipcRenderer.invoke('privacy:scan'),
+    remove: (payload) => ipcRenderer.invoke('privacy:remove', payload),
+  },
   leftovers: {
     find: (appId, includeRegistryReferences) =>
       ipcRenderer.invoke('leftovers:find', { appId, includeRegistryReferences }),

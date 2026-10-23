@@ -17,6 +17,11 @@
 
   const STEP_NAMES = ['Review', 'Uninstall', 'Verify', 'Leftovers', 'Cleanup'];
 
+/** Windows protects these targets; removal requires the override setting. */
+function isSystemTarget(app) {
+  return Boolean(app && (app.isSystemComponent || app.isSystemPackage || app.isFramework || app.nonRemovable));
+}
+
   function logLine(el, text, status) {
     if (!el) return;
     const row = document.createElement('div');
@@ -39,6 +44,20 @@
     current: null,
 
     async start(app) {
+      const forced = isSystemTarget(app);
+      if (forced && !(state.settings && state.settings.allowSystemOverride)) {
+        const ok = await U.confirmDialog({
+          title: 'Windows component',
+          body:
+            `<b>${esc(app.name)}</b> is a built-in Windows component. Windows protects it — removing it can break Store apps, updates or other features.<br/><br/>` +
+            'Force removal is the expert override in <b>Settings → Overrides</b>. Enable it now and continue?',
+          confirmLabel: 'Enable override and continue',
+          danger: true,
+        });
+        if (!ok) return;
+        await U.saveSettings({ allowSystemOverride: true });
+        U.toast('Force override enabled — you can turn it off in Settings.', 'ok', 4200);
+      }
       const planRes = await U.api.apps.plan(app.id);
       const plan = planRes.ok ? planRes.data : null;
       if (!plan || !plan.possible) {
@@ -49,10 +68,12 @@
       this.current = {
         app,
         plan,
+        forced: forced && Boolean(state.settings && state.settings.allowSystemOverride),
         step: 1,
         opts: {
           stopProcesses: (state.settings && state.settings.stopRunningProcesses) !== false,
           allUsers: false,
+          force: forced,
           scanLeftovers: (state.settings && state.settings.checkLeftoversAfterUninstall) !== false,
           checkRuntimes: (state.settings && state.settings.analyzeRuntimesOnUninstall) !== false,
         },
@@ -144,18 +165,30 @@
 
     // ---------------------------------------------------------------- step 1
     step1Html() {
-      const { plan } = this.current;
+      const { plan, forced } = this.current;
       const notes = (plan.notes || []).map((n) => `<li>${esc(n)}</li>`).join('');
 
       const opts = this.current.opts;
-      const appxOptions =
-        plan.method === 'appx'
-          ? optionRow('allUsers', 'Remove for all users (requires administrator rights) — also removes the provisioned package', opts.allUsers) +
-            `<div class="warn-block">Removing for all users needs a UAC prompt and may affect new user profiles.</div>`
-          : '';
+      let appxOptions = '';
+      if (plan.method === 'appx') {
+        appxOptions = forced
+          ? optionRow(
+              'force',
+              'Force removal for all user accounts, including the provisioned package (requires administrator rights)',
+              opts.force !== false,
+            ) +
+            `<div class="warn-block">Force mode removes the package from every profile and takes it out of new profiles. Windows features that depend on it will not work until it is reinstalled.</div>`
+          : optionRow('allUsers', 'Remove for all users (requires administrator rights) — also removes the provisioned package', opts.allUsers) +
+            `<div class="warn-block">Removing for all users needs a UAC prompt and may affect new user profiles.</div>`;
+      }
+
+      const overrideBanner = forced
+        ? `<div class="err-block"><strong>System override active.</strong> This is a protected Windows component. Removal runs with the override you enabled in Settings → Overrides; Windows features can break and Store apps may need repair.</div>`
+        : '';
 
       return `
         ${this.chips()}
+        ${overrideBanner}
         <div class="card">
           <div class="kv">
             <dt>Application</dt><dd>${esc(plan.name)}</dd>
@@ -174,7 +207,7 @@
         </div>
         <div class="row end">
           <button class="btn" data-cancel>Cancel</button>
-          <button class="btn danger" data-go><svg class="ico"><use href="#i-trash"></use></svg>Start uninstall</button>
+          <button class="btn danger" data-go><svg class="ico"><use href="#i-trash"></use></svg>${forced ? 'Force remove' : 'Start uninstall'}</button>
         </div>`;
     },
 
@@ -222,6 +255,7 @@
       const res = await U.api.uninstall.run({
         appId: app.id,
         allUsers: opts.allUsers,
+        force: opts.force === true,
         stopRunningProcesses: opts.stopProcesses,
       });
       append(res.ok ? `Uninstaller finished (${res.data ? res.data.code : 'ok'}).` : `Failed: ${res.error}`, res.ok ? 'ok' : 'err');

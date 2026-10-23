@@ -58,6 +58,10 @@
         <circle cx="10.8" cy="10.8" r="6.6" />
         <path d="M15.6 15.6 20 20" />
       </symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24">
+        <path d="M2.8 12c2.65-4.4 5.7-6.6 9.2-6.6s6.55 2.2 9.2 6.6c-2.65 4.4-5.7 6.6-9.2 6.6S5.45 16.4 2.8 12z" />
+        <circle cx="12" cy="12" r="2.8" />
+      </symbol>
       <symbol id="i-x" viewBox="0 0 24 24">
         <path d="M6.4 6.4 17.6 17.6" />
         <path d="M17.6 6.4 6.4 17.6" />
@@ -148,6 +152,9 @@
         </button>
         <button class="nav-item" data-view="leftovers">
           <svg class="ico"><use href="#i-sparkle" /></svg><span>Leftovers</span>
+        </button>
+        <button class="nav-item" data-view="privacy">
+          <svg class="ico"><use href="#i-eye" /></svg><span>Privacy</span>
         </button>
         <button class="nav-item" data-view="runtimes">
           <svg class="ico"><use href="#i-cube" /></svg><span>Shared runtimes</span>
@@ -257,6 +264,25 @@
           <div id="lo-results" class="hidden"></div>
         </section>
 
+        <!-- ----------------------------------------------------- privacy -->
+        <section id="privacy-view" class="view-page hidden">
+          <header class="page-head split">
+            <div>
+              <h2>Privacy</h2>
+              <p class="muted">
+                Windows components that collect, stage or upload your activity and diagnostic data — telemetry
+                services, scheduled tasks and the activity-history / error-report stores on disk. Removal is
+                backed up like everything else: services export to <code>.reg</code>, tasks export to
+                <code>.xml</code>, files go to quarantine (or are deleted permanently if you choose).
+              </p>
+            </div>
+            <button id="privacy-scan" class="btn primary">
+              <svg class="ico"><use href="#i-search" /></svg><span>Scan</span>
+            </button>
+          </header>
+          <div id="privacy-results"><div class="empty">Press <b>Scan</b> to inventory the telemetry and activity items on this system.</div></div>
+        </section>
+
         <!-- ---------------------------------------------------- runtimes -->
         <section id="runtimes-view" class="view-page hidden">
           <header class="page-head split">
@@ -310,7 +336,7 @@
         <section id="settings-view" class="view-page hidden">
           <header class="page-head">
             <h2>Settings</h2>
-            <p class="muted">Scanning behaviour and the safety defaults used by the uninstall wizard.</p>
+            <p class="muted">Scanning behaviour, privacy scan scope, override switches and the safety defaults used by the uninstall wizard.</p>
           </header>
           <div id="settings-body"></div>
         </section>

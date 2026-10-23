@@ -11,6 +11,7 @@ const { findLeftovers, findOrphanedFolders, buildTarget, candidateNames } = requ
 const clean = require('./leftovers/clean');
 const system = require('./system/system');
 const runtimes = require('./system/runtimes');
+const privacy = require('./privacy/privacy');
 const registry = require('./util/registry');
 const { isAdmin } = require('./util/elevate');
 const { compactKey } = require('./util/names');
@@ -359,21 +360,62 @@ function register() {
     return clean.purgeBatch(store.quarantineDir(), id);
   });
 
-  handle('uninstall:run', async ({ appId, allUsers, stopRunningProcesses }) => {
+  handle('uninstall:run', async ({ appId, allUsers, stopRunningProcesses, force }) => {
     const target = requireApp(appId);
-    const plan = buildPlan(target, {});
+    const plan = buildPlan(target, { force: Boolean(force) });
     if (!plan.possible && !target.installLocation && !target.packageFullName) {
       throw new Error('This entry has no uninstall command registered.');
     }
     const settings = store.getSettings();
     const result = await executeUninstall(target, plan, {
       allUsers: Boolean(allUsers),
+      force: Boolean(force),
       stopRunningProcesses: stopRunningProcesses === undefined ? settings.stopRunningProcesses : Boolean(stopRunningProcesses),
       onEvent: (event) => progress({ phase: 'uninstall', ...event }),
     });
-    log.info('Uninstall finished', { name: target.name, method: plan.method, ok: result.ok });
+    log.info('Uninstall finished', { name: target.name, method: plan.method, ok: result.ok, force: Boolean(force) });
     invalidateInventory();
     return result;
+  });
+
+  // ------------------------------------------------------------------
+  // Privacy (Windows telemetry / activity data)
+  // ------------------------------------------------------------------
+
+  handle('privacy:scan', async () => {
+    progress({ phase: 'privacy', message: 'Inventorying Windows telemetry services, tasks and activity stores…' });
+    const result = await privacy.scanPrivacy(store.getSettings());
+    log.info('Privacy scan finished', { findings: result.findings.length, errors: result.errors.length });
+    return result;
+  });
+
+  handle('privacy:remove', async ({ items = [], mode } = {}) => {
+    const settings = store.getSettings();
+    const chosen = mode || settings.defaultCleanupMode;
+    const payload = privacy.buildRemovalPayload(items);
+    if (!payload.files.length && !payload.registryKeys.length && !payload.system.length) {
+      throw new Error('Nothing selected to remove.');
+    }
+    const manifest = await clean.executeCleanup({
+      files: payload.files,
+      registryKeys: payload.registryKeys,
+      system: payload.system,
+      quarantineDir: store.quarantineDir(),
+      mode: chosen,
+      processNames: [],
+      onProgress: (p) => progress({ phase: 'clean', ...p }),
+    });
+    log.info('Privacy cleanup executed', { mode: chosen, succeeded: manifest.succeeded, failed: manifest.failed });
+    store.appendHistory({
+      name: 'Windows privacy cleanup',
+      version: '',
+      method: 'privacy',
+      ok: manifest.failed === 0,
+      cleaned: manifest.succeeded,
+      mode: chosen,
+    });
+    invalidateInventory();
+    return manifest;
   });
 
   handle('runtimes:analyze', async ({ force } = {}) => {

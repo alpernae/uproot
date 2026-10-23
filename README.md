@@ -47,6 +47,45 @@ The choice is persisted in `settings.json` and applied by the main process with
 `nativeTheme.themeSource`, so the whole window — including native scrollbars and
 form controls — matches from the moment it opens.
 
+### Privacy
+
+The **Privacy** view inventories Windows telemetry and behaviour-tracking items
+that can be removed through the same pipeline as application leftovers:
+
+- **Services** — the Connected User Experiences and Telemetry pipeline
+  (`DiagTrack`), the WAP push / telemetry relay (`dmwappushservice`) and the
+  Windows Error Reporting Service (optional, unchecked by default). The service
+  key is exported to a `.reg` backup before `sc delete` runs.
+- **Scheduled tasks** — everything under the Application Experience, Customer
+  Experience Improvement Program, Feedback, Windows Error Reporting, Device
+  Information, DiskDiagnostic and Autochk folders (benign tasks such as
+  `StartupAppTask` are always skipped). Tasks are exported to XML first.
+- **File stores** — the Connected Devices (Timeline) activity history, feedback
+  staging data and the Windows Error Reporting report folders. Files follow the
+  chosen cleanup mode: quarantine, or permanent delete.
+
+The scan is catalog-driven: a live service, task or folder only appears after it
+matched an entry in `src/main/privacy/privacy.js`, so everything the tool can
+remove is reviewable in one place. The **Settings → Privacy** group decides
+which of the three categories the scan includes.
+
+### Removing built-in Windows components
+
+Windows blocks force-removal of its own apps. With **Settings → Overrides →
+"Force-remove Windows components"** enabled (the wizard also offers to turn it
+on the first time you try) the uninstall wizard:
+
+- un-hides system components in the app list;
+- removes an MSIX package **for every user account** and takes the
+  **provisioned copy** out of new profiles (with a UAC prompt);
+- verifies removal by checking the registry entry and package registration,
+  ignoring the OS-managed package folders that always remain under
+  `WindowsApps`.
+
+Removing protected components can break Windows features, Store apps or
+updates. The default keeps the override off, and every attempt shows a red
+warning in the wizard's first step.
+
 ### Finding an application
 
 The search box matches every word you type (all terms must match) against name,
@@ -171,6 +210,7 @@ src/
   main/            Electron main process
     scan/          registry, winget and AppX enumeration + merge
     leftovers/     leftover discovery + quarantine/cleanup worker
+    privacy/       catalog-driven Windows telemetry & activity inventory
     system/        services, tasks, startup, shell extensions, runtime analysis
     uninstall/     plan derivation + uninstall execution
     util/          process/PS/registry/elevation/PE-parsing helpers

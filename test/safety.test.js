@@ -59,3 +59,22 @@ test('buildPlan falls back to the interactive vendor uninstaller', () => {
 test('buildPlan reports entries with nothing to run', () => {
   assert.equal(buildPlan({ id: 'z', name: 'Z', registry: [] }).possible, false);
 });
+
+test('buildPlan activates force only for MSIX packages', () => {
+  const plan = buildPlan(
+    { id: 'reg:x', name: 'X', packageFullName: 'Foo.Pkg_1.0_x64__deadbeef', registry: [] },
+    { force: true },
+  );
+  assert.equal(plan.method, 'appx');
+  assert.equal(plan.force, true);
+  assert.ok(plan.notes.some((n) => /override/i.test(n)), 'the override is explained in the plan notes');
+});
+
+test('buildPlan leaves vendor uninstallers untouched by force', () => {
+  const plan = buildPlan(
+    { id: 'reg:y', name: 'Y', registry: [{ uninstallString: '"C:\\Y\\uninstall.exe"' }] },
+    { force: true },
+  );
+  assert.equal(plan.method, 'vendor-interactive');
+  assert.equal(plan.force, false);
+});

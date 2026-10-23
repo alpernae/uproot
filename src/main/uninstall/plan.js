@@ -103,6 +103,13 @@ function buildPlan(app, options = {}) {
     app.needsAdmin === true ||
     /program files|programdata/i.test(String(app.installLocation || ''));
 
+  const force = canAppx && options.force === true;
+  if (force) {
+    notes.push(
+      'System override is on: the package is removed for every user account and the provisioned copy is taken out of new profiles. This needs a UAC prompt.',
+    );
+  }
+
   steps.push({ id: 'stop-processes', label: 'Close any running processes from the install folder' });
   steps.push({ id: 'uninstall', label: `Run ${method}` });
   steps.push({ id: 'verify', label: 'Verify the application was removed' });
@@ -120,6 +127,7 @@ function buildPlan(app, options = {}) {
     needsAdmin,
     possible: true,
     silent: !interactive,
+    force,
     msiProductCode: msiCode,
     wingetId: wingetUsable ? wingetId : null,
     packageFullName: app.packageFullName || null,
